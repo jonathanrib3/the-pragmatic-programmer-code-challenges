@@ -1,0 +1,25 @@
+require_relative 'src/lib/file_converter'
+
+task default: %w[convert_directory_files:yaml_to_json]
+
+namespace :convert_directory_files do
+  desc 'Converts yaml files from a given directory to json format'
+  task :yaml_to_json do
+    ARGV.each { |arg| task arg.to_sym do; end }
+    return if ARGV[1].nil?
+
+    begin
+      directory_path = Pathname.new(ARGV[1])
+      yaml_files_paths = directory_path.children
+
+      yaml_files_paths.each do |file_path|
+        p "Converting #{file_path.basename}"
+        FileConverter::YamlToJsonFileConverter.new(file_path).call
+        p 'Done!'
+      end
+    rescue StandardError => e
+      p "Task '#{ARGV[0]}' has encountered an error: #{e.exception.class} - #{e.message}"
+      p "Top of the error call stack: #{e.backtrace.first}"
+    end
+  end
+end

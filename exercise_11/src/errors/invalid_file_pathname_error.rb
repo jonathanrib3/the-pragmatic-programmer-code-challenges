@@ -1,0 +1,2 @@
+class InvalidFilePathnameError < StandardError
+end
